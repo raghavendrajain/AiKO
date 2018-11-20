@@ -1,8 +1,7 @@
-let mobilenet; 
+let mobileNet;
+let video;
+let label = "";
 
-function modelReady(){
-	console.log("Model is ready!!!");
-}
 
 function setup() {
 	createCanvas(640, 480);
@@ -11,35 +10,39 @@ function setup() {
 }
 
 
-let mobileNet;
 
 function modelReady() {
 	console.log("Model is ready");
-	mobileNet.predict(puffin, gotResults);
+	mobileNet.predict(gotResults);
 }
 
 function gotResults(error, results){
 	if (error){
 		console.error(error);
 	} else{
-		console.log(results);
-		let label = results[0].className;
-		fill(0);
-		textSize(64);
-		text(label, 10, height-100);
-		createP(label);
+		// console.log(results);
+		label = results[0].className;
+		mobileNet.predict(gotResults);
 	}
 }
 
-function imageReady(){
-	image(puffin, 0, 0, width, height);
-}
+// function imageReady(){
+// 	image(puffin, 0, 0, width, height);
+// }
 
 
 function setup(){
-	createCanvas(640, 480);
-	puffin = createImg("images/puffin.jpg", imageReady);
-	puffin.hide();
+	createCanvas(640, 550);
+	video = createCapture(VIDEO);
+	video.hide();
 	background(0);
-	mobileNet = ml5.imageClassifier("MobileNet", modelReady);
+	mobileNet = ml5.imageClassifier("MobileNet", video, modelReady);
+}
+
+function draw(){
+	background(0);
+	image(video, 0, 0);
+	fill(255);
+	textSize(32);
+	text(label, 10, height-100);
 }
